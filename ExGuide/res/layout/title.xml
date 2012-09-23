@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/top_navigate"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+  
+    android:orientation="horizontal"
+    android:background="@drawable/backcolor" >
+
+
+
+        <TextView
+            android:id="@+id/extitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+     
+    
+            android:layout_margin="5dip"
+            android:gravity="center"
+            android:text="2012国际汽车展"
+            android:textColor="#ffffffff"
+            android:textSize="13.5sp" />
+
+
+</LinearLayout>
