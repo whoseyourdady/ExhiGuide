@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import com.scut.exguide.assist.MyActivity;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -38,7 +37,7 @@ public class DownloadImage extends
 	protected ArrayList<Bitmap> doInBackground(String[]... params) {
 		// TODO Auto-generated method stub
 		try {
-			return getImage((String[]) params[0]);
+			return getImage(params[0]);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,7 +75,7 @@ public class DownloadImage extends
 			InputStream inputStream = conn.getInputStream();
 			byte[] data = readStream(inputStream);
 			File file = new File("smart.jpg");// 给图片起名子
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);			
 			FileOutputStream outStream = new FileOutputStream(file);// 写出对象
 			outStream.write(data);// 写入
 			outStream.close(); // 关闭流

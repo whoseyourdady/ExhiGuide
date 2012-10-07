@@ -10,18 +10,29 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 public class RoundListViewAdapter_video extends BaseAdapter implements
 		ListAdapter {
 
-	final String[] strs = { "登陆个人信息个人信息个人信息个人信息个人信息个人信息",
-			"个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息", "意见反馈",
-			"关于我们个人信息个人信息个人信息个人信息个人信息个人信息", "我是商家个人信息个人信息个人信息个人信息个人信息个人信息个人信息",
-			"登陆个人信息个人信息个人信息个人信息个人信息个人信息",
-			"个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息个人信息", "意见反馈",
-			"关于我们个人信息个人信息个人信息个人信息个人信息个人信息", "我是商家个人信息个人信息个人信息个人信息个人信息个人信息个人信息" };
+	final String[] strs = { "一汽大众新宝来" };
+	
+	final String[] strs1 = { "《古墓丽影9》" };
+	
+	final String[] strs2 = { "深圳蔓诺视觉摄影" };
+	
+
+	final String[] strs3 = { "2012北京国际汽车展览会" };
+	
+
+	final String[] strs4 = { "2012东京游戏展" };
+	
+
+	final String[] strs5 = { "2012中国婚博会" };
+	
+	final int[] images={R.drawable.bei,R.drawable.hun,R.drawable.you,R.drawable.gu};
 
 	private Context context;
 	private LayoutInflater inflater;
@@ -56,8 +67,12 @@ public class RoundListViewAdapter_video extends BaseAdapter implements
 		final View ll = convertView;
 		TextView tv = (TextView) convertView
 				.findViewById(R.id.navigation_more_checklist01_textview);
-		tv.setText(strs[position]);
-
+		tv.setText(strs5[position]);
+		
+		ImageView iv = (ImageView) convertView
+				.findViewById(R.id.video_image);
+		iv.setImageResource(images[1]);
+		
 		convertView.setOnClickListener(new OnClickListener() {
 
 			@Override

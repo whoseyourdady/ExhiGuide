@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="简介"
-            android:textColor="#171918"
+            android:textColor="#FFFFFF"
             android:textSize="17sp" />
         <!--
         <ImageView
@@ -44,7 +44,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="视频"
-            android:textColor="#171918"
+            android:textColor="#FFFFFF"
             android:textSize="17sp" />
 
         <!--
