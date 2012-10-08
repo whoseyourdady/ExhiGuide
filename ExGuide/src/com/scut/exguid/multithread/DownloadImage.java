@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.scut.exguide.assist.MyActivity;
+import com.scut.exguide.ui.ExhiHomeActivity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,13 +24,19 @@ public class DownloadImage extends
 		AsyncTask<String[], java.lang.Void, ArrayList<Bitmap>> {
 
 	public MyActivity mInstance;
-	
+
 	public DownloadImage(MyActivity Instance) {
 		mInstance = Instance;
 	}
-	
-	
-	
+
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		((ExhiHomeActivity) mInstance).setProgressBar(true);
+		super.onPreExecute();
+
+	}
+
 	/**
 	 * 下载图片的后台程序
 	 */
@@ -45,18 +52,15 @@ public class DownloadImage extends
 		return null;
 
 	}
-	
-	
 
 	@Override
 	protected void onPostExecute(ArrayList<Bitmap> result) {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
-		mInstance.UpdateImage(result);
-		
+		mInstance.Update(result, 1);
+		((ExhiHomeActivity) mInstance).setProgressBar(false);
+
 	}
-
-
 
 	/**
 	 * 下载网上图片
@@ -75,7 +79,7 @@ public class DownloadImage extends
 			InputStream inputStream = conn.getInputStream();
 			byte[] data = readStream(inputStream);
 			File file = new File("smart.jpg");// 给图片起名子
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);			
+			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 			FileOutputStream outStream = new FileOutputStream(file);// 写出对象
 			outStream.write(data);// 写入
 			outStream.close(); // 关闭流

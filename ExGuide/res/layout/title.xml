@@ -13,7 +13,7 @@
         android:background="@drawable/menu_unfold"/>
 
     <TextView
-        android:id="@+id/extitle"
+        android:id="@+id/exhibitionname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

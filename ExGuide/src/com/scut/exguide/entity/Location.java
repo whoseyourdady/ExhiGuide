@@ -9,22 +9,22 @@ public class Location {
 	
 	public static final int TAG = 2;
 
-	private String mTitle;//展会的名称
+	private String mName;//展会的名称
 	private String mProvince;//所在省
 	private String mCity;//所在城市
 	private String mHall;//所在展馆
 	private int mID;//对应的ID
 	
 	public Location(String title, String province, String city, String hall, int id) {
-		mTitle = title;
+		mName = title;
 		mProvince = province;
 		mCity = city;
 		mHall = hall;
 		mID = id;
 	}
 	
-	public String getTitle() {
-		return mTitle;
+	public String getName() {
+		return mName;
 	}
 	
 	public String getProvince() {

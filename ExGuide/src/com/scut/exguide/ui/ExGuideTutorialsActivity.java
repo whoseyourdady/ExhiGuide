@@ -44,8 +44,9 @@ public class ExGuideTutorialsActivity extends Activity {
 		LayoutInflater inflater = getLayoutInflater();
 
 		pageViews = new ArrayList<View>(); // 生成链表
-		pageViews.add(inflater.inflate(R.layout.tutp1, null)); // 将要那个展示的页面加入链表中
-		pageViews.add(inflater.inflate(R.layout.tutp2, null));
+		// pageViews.add(inflater.inflate(R.layout.tutp1, null)); //
+		// 将要那个展示的页面加入链表中
+		// pageViews.add(inflater.inflate(R.layout.tutp2, null));
 
 		imageViews = new ImageView[pageViews.size()]; // 生成小圆点
 		main = (ViewGroup) inflater.inflate(R.layout.tutorials, null);
@@ -74,16 +75,17 @@ public class ExGuideTutorialsActivity extends Activity {
 		}
 
 		iButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-//				Intent intent = new Intent(ExGuideTutorialsActivity.this, ExhiHomeActivity.class);
-//				startActivity(intent);
+				// Intent intent = new Intent(ExGuideTutorialsActivity.this,
+				// ExhiHomeActivity.class);
+				// startActivity(intent);
 				finish();
 			}
 		});
-		
+
 		setContentView(main);
 
 		viewPager.setAdapter(new GuidePageAdapter());

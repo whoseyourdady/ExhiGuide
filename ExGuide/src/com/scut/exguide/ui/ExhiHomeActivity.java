@@ -2,6 +2,10 @@ package com.scut.exguide.ui;
 
 import java.util.ArrayList;
 
+import com.baidu.oauth2.BaiduOAuth;
+import com.baidu.oauth2.BaiduOAuthViaDialog;
+import com.baidu.oauth2.BaiduOAuthViaDialog.DialogListener;
+import com.baidu.pcs.PcsClient;
 import com.scut.exguid.multithread.DownloadImage;
 import com.scut.exguide.assist.ExhibitsPageAdapter;
 import com.scut.exguide.assist.ExhibitsPageChangeListener;
@@ -31,18 +35,34 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
+	/*
+	 * 百度PCS验证
+	 */
+	final static private String APP_KEY = "GqRQpN9bayVt6yIAzrqsUbnU";
+	final static private String APP_ROOT = "/apps/展会导游宝";
+	private PcsClient mPcsClient = null;// 客户端对象
+	private BaiduOAuth mBaiduoauth;// 百度封装的验证
+
 	private final static String TAG = "ExhiHomeActivity";
 	private LayoutInflater inflater;
 
-	private ViewPager mPviewPager; // viewpager控件
-	private ArrayList<View> mPosterPageViews;// 用于翻页的view
+	private ViewPager mPoserViewPager; // viewpager控件
+	private ArrayList<View> mPosterPages;// 用于翻页的view
+
+	// 下部产品介绍中的view
+	private ViewPager mInfoViewPager;
+	private ArrayList<View> mInfoPages;
 
 	private ImageView _imageView;// 临时变量
-	private ImageView[] imageViews;// 小圆点的view
+	private ImageView[] DotImageViews;// 小圆点的view
+
 	// 产品主页布局
 	private ViewGroup main;
 	// 上方的海报
@@ -50,18 +70,19 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	// 海报中的小圆点
 	private ViewGroup mDotgroup;
 	// 下方的产品信息
-	private ViewGroup mExhibitsChannel;
-	
-	private Button menuBtn;
-	private View[] children;
-	
-	// 下部产品介绍中的view
-	private ViewPager mEviewPager;
-	private ArrayList<View> mExhibitsPageView;
+	private ViewGroup mInfoChannel;
+	// 图片的progressbar
+	private ProgressBar mPosterProgressBar;
 
 	// 下部产品介绍中的文字头
 	private ViewGroup mItemHeader;
 	private LinearLayout[] mItem;
+	
+	//展会的名字
+	private TextView mExhibitionName;
+
+	private Button menuBtn;
+	private View[] children;
 
 	private MenuHorizontalScrollView scrollView;
 	private ListView menuList;
@@ -73,10 +94,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		inflater = LayoutInflater.from(this);
-		main = (ViewGroup) inflater.inflate(R.layout.exhibition, null);
+		main = (ViewGroup) inflater.inflate(R.layout.homeactivity, null);
 
 		setContentView(inflater.inflate(R.layout.menu_scroll_view, null));
 		this.scrollView = (MenuHorizontalScrollView) findViewById(R.id.mScrollView);
@@ -84,16 +103,20 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		this.menuList = (ListView) findViewById(R.id.menuList);
 		this.menuList.setAdapter(menuListAdapter);
 
-		this.menuBtn = (Button)this.main.findViewById(R.id.menuBtn);
+		this.menuBtn = (Button) this.main.findViewById(R.id.menuBtn);
 		this.menuBtn.setOnClickListener(onClickListener);
-		
+
 		View leftView = new View(this);
 		leftView.setBackgroundColor(Color.TRANSPARENT);
-		children = new View[]{leftView, main};
-		this.scrollView.initViews(children, new com.scut.exguide.assist.SizeCallBackForMenu(this.menuBtn), this.menuList);
+		children = new View[] { leftView, main };
+		this.scrollView.initViews(children,
+				new com.scut.exguide.assist.SizeCallBackForMenu(this.menuBtn),
+				this.menuList);
 		this.scrollView.setMenuBtn(this.menuBtn);
-		
-		initalExhibits();
+
+		initalLayout();
+
+		initalInfo();
 
 		initalItemHeader();
 
@@ -104,7 +127,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 	}
 
-	private OnClickListener onClickListener = new OnClickListener(){
+	private OnClickListener onClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
@@ -112,7 +135,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			scrollView.clickMenuBtn();
 		}
 	};
-	
+
 	public MenuHorizontalScrollView getScrollView() {
 		return scrollView;
 	}
@@ -124,27 +147,55 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
-		if(keyCode == KeyEvent.KEYCODE_BACK){
-			if(MenuHorizontalScrollView.menuOut == true)
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (MenuHorizontalScrollView.menuOut == true)
 				this.scrollView.clickMenuBtn();
 			else
 				this.finish();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
-	}	
-	
+	}
+
+	/**
+	 * 将布局里的一些控件初始化
+	 */
+	private void initalLayout() {
+		mInfoChannel = (ViewGroup) main.findViewById(R.id.info);
+
+		mInfoViewPager = (ViewPager) mInfoChannel
+				.findViewById(R.id.infoviewpages);
+
+		mPosterChannel = (ViewGroup) main.findViewById(R.id.poster);
+
+		mDotgroup = (ViewGroup) mPosterChannel.findViewById(R.id.dotviewgroup);
+
+		
+
+		mPoserViewPager = (ViewPager) mPosterChannel
+				.findViewById(R.id.posterviewpages);
+
+		mItemHeader = (ViewGroup) mInfoChannel.findViewById(R.id.item_header);
+
+		mPosterProgressBar = (ProgressBar) mPosterChannel
+				.findViewById(R.id.posterloading);
+		
+//		//在这里胡乱地找到了展会名称
+		ViewGroup title = (ViewGroup) main.findViewById(R.id.title);		
+		mExhibitionName = (TextView) title.findViewById(R.id.exhibitionname);
+	}
+
 	/**
 	 * 初始化下部产品介绍
 	 */
-	private void initalExhibits() {
-		mExhibitsChannel = (ViewGroup) main.findViewById(R.id.exhibits);
+	private void initalInfo() {
+		// mInfoChannel = (ViewGroup) main.findViewById(R.id.info);
 
-		mEviewPager = (ViewPager) mExhibitsChannel
-				.findViewById(R.id.ExhibitsguidePages);
-
-		mItemHeader = (ViewGroup) mExhibitsChannel
-				.findViewById(R.id.item_header);
+		/*
+		 * 简介与视频的Activity
+		 */
+		// mInfoViewPager = (ViewPager) mInfoChannel
+		// .findViewById(R.id.infoviewpages);
 
 		Intent intent = new Intent();
 		intent.setClass(ExhiHomeActivity.this, ExhiAttributeListActivity.class);
@@ -155,56 +206,36 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 				ExhiVedioSelectListActivity.class);
 		intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		mExhibitsPageView = new ArrayList<View>();
-		mExhibitsPageView.add(getLocalActivityManager().startActivity(
+		mInfoPages = new ArrayList<View>();
+		mInfoPages.add(getLocalActivityManager().startActivity(
 				"ExhiAttributeListActivity", intent).getDecorView());
 
-		mExhibitsPageView.add(getLocalActivityManager().startActivity(
+		mInfoPages.add(getLocalActivityManager().startActivity(
 				"ExhiVedioSelectListActivity", intent2).getDecorView());
 
-		mItem = new LinearLayout[mExhibitsPageView.size()];
-
-		for (int i = 0; i < 2; i++) {
-			if (i == 0) {
-				mItem[i] = (LinearLayout) mItemHeader.findViewById(R.id.infol);
-				mItem[i].setBackgroundColor(Color.rgb(153, 153, 153));
-			} else {
-				mItem[i] = (LinearLayout) mItemHeader.findViewById(R.id.medial);
-				mItem[i].setBackgroundColor(Color.rgb(51, 51, 51));
-			}
-
-		}
-
-		mEviewPager.setAdapter(new ExhibitsPageAdapter(mExhibitsPageView));
-
-		mEviewPager.setOnPageChangeListener(new ExhibitsPageChangeListener(
-				mItem));
 	}
 
 	/*
-	 * 初始化上部海报栏
+	 * 初始化上部海报栏 参数是返回的imageview
 	 */
 	private void UpdatePoster(ArrayList<View> viewList) {
 
-		// mPosterPageViews = new ArrayList<View>(); // 生成链表
-		// mPosterPageViews.add(inflater.inflate(R.layout.poster1, null)); //
-		// 将要那个展示的页面加入链表中
-		// mPosterPageViews.add(inflater.inflate(R.layout.poster2, null));
+		DotImageViews = new ImageView[viewList.size()]; // 生成小圆点
 
-		imageViews = new ImageView[viewList.size()]; // 生成小圆点
+		// mPosterChannel = (ViewGroup) main.findViewById(R.id.poster);
+		//
+		// mDotgroup = (ViewGroup)
+		// mPosterChannel.findViewById(R.id.dotviewgroup);
+		//
+		 initalDot();// 初始化小圆点
+		//
+		// mPoserViewPager = (ViewPager) mPosterChannel
+		// .findViewById(R.id.posterviewpages);
 
-		mPosterChannel = (ViewGroup) main.findViewById(R.id.main);
+		mPoserViewPager.setAdapter(new PosterPageAdapter(viewList));
 
-		mDotgroup = (ViewGroup) mPosterChannel.findViewById(R.id.viewGroup);
-
-		initalDot();// 初始化小圆点
-
-		mPviewPager = (ViewPager) mPosterChannel.findViewById(R.id.guidePages);
-
-		mPviewPager.setAdapter(new PosterPageAdapter(viewList));
-
-		mPviewPager.setOnPageChangeListener(new PosterPageChangeListener(
-				imageViews));
+		mPoserViewPager.setOnPageChangeListener(new PosterPageChangeListener(
+				DotImageViews));
 	}
 
 	/**
@@ -213,18 +244,14 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	 * @param bitmaps
 	 * @return
 	 */
-	private ArrayList<View> CreateViewList(ArrayList<Bitmap> bitmaps) {
+	private ArrayList<View> CreatePosterView(ArrayList<Bitmap> bitmaps) {
 
 		ImageView _imageView;
 		ArrayList<View> viewList = new ArrayList<View>();
 		for (int i = 0; i < bitmaps.size(); i++) {
-			// _imageView = new ImageView(this);
-			View temp = inflater.inflate(R.layout.poster2, null);
-			_imageView = (ImageView) temp.findViewById(R.id.imageView1);
-			// _imageView.setImageBitmap(bitmaps.get(i));
-
+			View temp = inflater.inflate(R.layout.poster, null);
+			_imageView = (ImageView) temp.findViewById(R.id.show);
 			_imageView.setImageBitmap(bitmaps.get(i));
-			// viewList.add(_imageView);
 			viewList.add(temp);
 		}
 		return viewList;
@@ -235,20 +262,20 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	 */
 	private void initalDot() {
 		// 初始化小圆点
-		for (int i = 0; i < imageViews.length; i++) {
+		for (int i = 0; i < DotImageViews.length; i++) {
 			_imageView = new ImageView(ExhiHomeActivity.this);
 			_imageView.setLayoutParams(new LayoutParams(20, 20));
 			_imageView.setPadding(20, 0, 20, 0);
-			imageViews[i] = _imageView;
+			DotImageViews[i] = _imageView;
 			if (i == 0) {
 				// 默认选中第一张图片
-				imageViews[i]
+				DotImageViews[i]
 						.setBackgroundResource(R.drawable.page_indicator_focused);
 			} else {
-				imageViews[i].setBackgroundResource(R.drawable.page_indicator);
+				DotImageViews[i]
+						.setBackgroundResource(R.drawable.page_indicator);
 			}
-
-			mDotgroup.addView(imageViews[i]);
+			mDotgroup.addView(DotImageViews[i]);
 		}
 	}
 
@@ -256,6 +283,34 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	 * 初始化itemheader
 	 */
 	private void initalItemHeader() {
+		// mItemHeader = (ViewGroup)
+		// mInfoChannel.findViewById(R.id.item_header);
+
+		mItem = new LinearLayout[mInfoPages.size()];
+		for (int i = 0; i < 2; i++) {
+			if (i == 0) {
+				mItem[i] = (LinearLayout) mItemHeader.findViewById(R.id.infol);
+				mItem[i].setBackgroundColor(Color.rgb(153, 153, 153));
+			} else {
+				mItem[i] = (LinearLayout) mItemHeader.findViewById(R.id.medial);
+				mItem[i].setBackgroundColor(Color.rgb(51, 51, 51));
+			}
+		}
+
+		mInfoViewPager.setAdapter(new ExhibitsPageAdapter(mInfoPages));
+		mInfoViewPager.setOnPageChangeListener(new ExhibitsPageChangeListener(
+				mItem));
+	}
+
+	/**
+	 * 进度条
+	 */
+	public void setProgressBar(boolean flag) {
+		if (!flag) {
+			mPosterProgressBar.setVisibility(View.GONE);
+		} else {
+			mPosterProgressBar.setVisibility(View.VISIBLE);
+		}
 
 	}
 
@@ -265,16 +320,58 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		return TAG;
 	}
 
-	@Override
-	public void UpdateImage(ArrayList<Bitmap> bitmapsList) {
-		// TODO Auto-generated method stub
-		UpdatePoster(CreateViewList(bitmapsList));
-
-	}
-
+	/**
+	 * 1是更新海报
+	 */
 	@Override
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
 
+		switch(((Integer) param[1])) {
+		case 1: {
+			ArrayList<Bitmap> bitmapsList = (ArrayList<Bitmap>) param[0];
+			UpdatePoster(CreatePosterView(bitmapsList));
+		}break;
+		}
+		
 	}
+
+	/*
+	 * 百度PCS验证部份
+	 */
+	private void getBaiduOAuth() {
+		mBaiduoauth = new BaiduOAuthViaDialog(APP_KEY);
+
+		mBaiduoauth.startDialogAuth(ExhiHomeActivity.this, new String[] {
+				"basic", "netdisk" }, new DialogListener() {
+
+			@Override
+			public void onCancel() {
+				Toast.makeText(getApplicationContext(),
+						"User  cancel the request", Toast.LENGTH_LONG).show();
+			}
+
+			/*
+			 * 获得access_token (non-Javadoc)
+			 * 
+			 * @see
+			 * com.baidu.oauth2.BaiduOAuthViaDialog.DialogListener#onComplete
+			 * (android.os.Bundle)
+			 */
+			@Override
+			public void onComplete(Bundle values) {
+				String accessToken = values.getString("access_token");
+				Toast.makeText(getApplicationContext(), accessToken,
+						Toast.LENGTH_LONG).show();
+
+			}
+
+			@Override
+			public void onException(String msg) {
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+			}
+		});
+	}
+
 }
