@@ -2,23 +2,25 @@
     android:id="@+id/top_navigate"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-  
-    android:orientation="horizontal"
-    android:background="@drawable/backcolor" >
+    android:background="@drawable/extitle"
+    android:orientation="horizontal" >
 
+    <Button
+        android:id="@+id/menuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/menu_unfold"/>
 
-
-        <TextView
-            android:id="@+id/extitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-     
-    
-            android:layout_margin="5dip"
-            android:gravity="center"
-            android:text="2012国际汽车展"
-            android:textColor="#ffffffff"
-            android:textSize="13.5sp" />
-
+    <TextView
+        android:id="@+id/extitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="2dip"
+        android:layout_marginLeft="10dip"
+        android:gravity="left"
+        android:text="2012中国婚博会"
+        android:textSize="15sp" />
 
 </LinearLayout>

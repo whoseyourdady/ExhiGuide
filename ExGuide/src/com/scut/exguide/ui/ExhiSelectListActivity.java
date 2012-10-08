@@ -21,6 +21,7 @@ public class ExhiSelectListActivity extends Activity {
 
 	private ListView listviewExhibition;// 选择会展的listview
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);

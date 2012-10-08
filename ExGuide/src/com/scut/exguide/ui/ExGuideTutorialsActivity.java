@@ -3,7 +3,6 @@ package com.scut.exguide.ui;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -76,6 +75,7 @@ public class ExGuideTutorialsActivity extends Activity {
 
 		iButton.setOnClickListener(new OnClickListener() {
 			
+			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 //				Intent intent = new Intent(ExGuideTutorialsActivity.this, ExhiHomeActivity.class);
@@ -151,16 +151,19 @@ public class ExGuideTutorialsActivity extends Activity {
 	// 指引页面更改事件监听器
 	class GuidePageChangeListener implements OnPageChangeListener {
 
+		@Override
 		public void onPageScrollStateChanged(int arg0) {
 			// TODO Auto-generated method stub
 
 		}
 
+		@Override
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
 			// TODO Auto-generated method stub
 
 		}
 
+		@Override
 		public void onPageSelected(int arg0) {
 			for (int i = 0; i < imageViews.length; i++) {
 				imageViews[arg0]
