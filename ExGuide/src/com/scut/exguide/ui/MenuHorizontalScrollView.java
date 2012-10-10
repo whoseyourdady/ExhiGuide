@@ -27,7 +27,7 @@ public class MenuHorizontalScrollView extends HorizontalScrollView {
 	public static boolean menuOut;
 	
 	/*扩展宽度*/
-	private final int ENLARGE_WIDTH = 80;
+	private final int ENLARGE_WIDTH = 240;
 	
 	/*菜单的宽�*/
 	private int menuWidth;
@@ -114,7 +114,7 @@ public class MenuHorizontalScrollView extends HorizontalScrollView {
 	  * 滑动出菜�?
 	  */
 	 private void menuSlide(){
-		 
+		 Log.d("FUCK", "aaaaaaaaaaaa");
 		 if(this.menuWidth == 0){
 			 menuOut = true;
 		 }
@@ -165,10 +165,12 @@ public class MenuHorizontalScrollView extends HorizontalScrollView {
 		else{
 			if(ev.getAction() == MotionEvent.ACTION_UP){
 				menuSlide();
+				Log.d("menu", "ddddd");
 				return false;
 			}
 		}
-		return super.onTouchEvent(ev);
+		//return super.onTouchEvent(ev);
+		return false;
 	}
 
 

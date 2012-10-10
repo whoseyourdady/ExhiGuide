@@ -22,14 +22,14 @@
         
         <ImageView
             android:id="@+id/arrow_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="10dip"
             android:layout_marginTop="10dp"
-            android:background="@drawable/mail_attach_item_arrow" >
+            android:background="@drawable/arrow_up" >
         </ImageView>
         
         <TextView

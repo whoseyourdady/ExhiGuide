@@ -1,6 +1,9 @@
 package com.scut.exguide.ui;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+
 
 import com.baidu.oauth2.BaiduOAuth;
 import com.baidu.oauth2.BaiduOAuthViaDialog;
@@ -13,17 +16,26 @@ import com.scut.exguide.assist.MenuListAdapter;
 import com.scut.exguide.assist.MyActivity;
 import com.scut.exguide.assist.PosterPageAdapter;
 import com.scut.exguide.assist.PosterPageChangeListener;
+import com.scut.exguide.utils.TransistionUtil;
 
 import android.app.ActivityGroup;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
 
 import android.support.v4.view.ViewPager;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,7 +53,12 @@ import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
-
+	// 定义Menu菜单选项的ItemId
+	final static int ONE = Menu.FIRST;
+	final static int TWO = Menu.FIRST + 1;
+	final static int THREE = Menu.FIRST + 2;
+	final static int FOUR = Menu.FIRST + 3;
+	final static int FIVE = Menu.FIRST + 4;
 	/*
 	 * 百度PCS验证
 	 */
@@ -77,8 +94,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	// 下部产品介绍中的文字头
 	private ViewGroup mItemHeader;
 	private LinearLayout[] mItem;
-	
-	//展会的名字
+
+	// 展会的名字
 	private TextView mExhibitionName;
 
 	private Button menuBtn;
@@ -96,29 +113,30 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		inflater = LayoutInflater.from(this);
 		main = (ViewGroup) inflater.inflate(R.layout.homeactivity, null);
-
-		setContentView(inflater.inflate(R.layout.menu_scroll_view, null));
-		this.scrollView = (MenuHorizontalScrollView) findViewById(R.id.mScrollView);
-		this.menuListAdapter = new MenuListAdapter(this, 0);
-		this.menuList = (ListView) findViewById(R.id.menuList);
-		this.menuList.setAdapter(menuListAdapter);
-
-		this.menuBtn = (Button) this.main.findViewById(R.id.menuBtn);
-		this.menuBtn.setOnClickListener(onClickListener);
-
-		View leftView = new View(this);
-		leftView.setBackgroundColor(Color.TRANSPARENT);
-		children = new View[] { leftView, main };
-		this.scrollView.initViews(children,
-				new com.scut.exguide.assist.SizeCallBackForMenu(this.menuBtn),
-				this.menuList);
-		this.scrollView.setMenuBtn(this.menuBtn);
+		// setContentView(inflater.inflate(R.layout.menu_scroll_view, null));
+		// this.scrollView = (MenuHorizontalScrollView)
+		// findViewById(R.id.mScrollView);
+		// this.menuListAdapter = new MenuListAdapter(this, 0);
+		// this.menuList = (ListView) findViewById(R.id.menuList);
+		// this.menuList.setAdapter(menuListAdapter);
+		//
+		// this.menuBtn = (Button) this.main.findViewById(R.id.menuBtn);
+		// this.menuBtn.setOnClickListener(onClickListener);
+		//
+		// View leftView = new View(this);
+		// leftView.setBackgroundColor(Color.TRANSPARENT);
+		// children = new View[] { leftView, main };
+		// this.scrollView.initViews(children,
+		// new com.scut.exguide.assist.SizeCallBackForMenu(this.menuBtn),
+		// this.menuList);
+		// this.scrollView.setMenuBtn(this.menuBtn);
 
 		initalLayout();
 
 		initalInfo();
 
 		initalItemHeader();
+		setContentView(main);
 
 		String[] url = {
 				"http://pic.iresearch.cn/news/0468/20120903/0082@56936.jpg",
@@ -133,6 +151,12 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			scrollView.clickMenuBtn();
+			Log.d("aaa", MenuHorizontalScrollView.menuOut + "");
+			if (!MenuHorizontalScrollView.menuOut) {
+				main.setEnabled(false);
+			} else
+				main.setEnabled(true);
+
 		}
 	};
 
@@ -144,17 +168,97 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		this.scrollView = scrollView;
 	}
 
+	// 创建Menu菜单
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, ONE, 0, "绑定百度"); // 设置文字与图标
+		menu.add(0, TWO, 0, "分享");
+		menu.add(0, THREE, 0, "设置");
+		menu.add(0, FOUR, 0, "帮助");
+		menu.add(0, FIVE, 0, "退出");
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	// 点击Menu菜单选项响应事件
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = new Intent();
+		switch (item.getItemId()) {
+		case 1:
+			this.getBaiduOAuth();
+			break;
+		/*----------------------------------------------------*/
+		case 2:
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+			intent.putExtra(Intent.EXTRA_TEXT, "展会宝");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(Intent.createChooser(intent, "分享"));
+			break;
+		/*----------------------------------------------------*/
+		case 4:
+			intent.setClass(this, ExGuideTutorialsActivity.class);
+			startActivity(intent);
+			break;
+		case 5:
+			AlertDialog alertDialog = new AlertDialog.Builder(this)
+					.setTitle("提示")
+					.setMessage("是否退出本程序")
+					.setPositiveButton(
+							"确定",
+							new android.content.DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									finish();
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									return;
+								}
+							}).create();
+			alertDialog.show();
+			break;
+		default:
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (MenuHorizontalScrollView.menuOut == true)
-				this.scrollView.clickMenuBtn();
-			else
-				this.finish();
-			return true;
+			AlertDialog alertDialog = new AlertDialog.Builder(this)
+					.setTitle("提示")
+					.setMessage("是否退出本程序")
+					.setPositiveButton(
+							"确定",
+							new android.content.DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									finish();
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									return;
+								}
+							}).create();
+			alertDialog.show();
 		}
-		return super.onKeyDown(keyCode, event);
+		return false;
 	}
 
 	/**
@@ -170,8 +274,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		mDotgroup = (ViewGroup) mPosterChannel.findViewById(R.id.dotviewgroup);
 
-		
-
 		mPoserViewPager = (ViewPager) mPosterChannel
 				.findViewById(R.id.posterviewpages);
 
@@ -179,9 +281,9 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		mPosterProgressBar = (ProgressBar) mPosterChannel
 				.findViewById(R.id.posterloading);
-		
-//		//在这里胡乱地找到了展会名称
-		ViewGroup title = (ViewGroup) main.findViewById(R.id.title);		
+
+		// //在这里胡乱地找到了展会名称
+		ViewGroup title = (ViewGroup) main.findViewById(R.id.title);
 		mExhibitionName = (TextView) title.findViewById(R.id.exhibitionname);
 	}
 
@@ -227,7 +329,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		// mDotgroup = (ViewGroup)
 		// mPosterChannel.findViewById(R.id.dotviewgroup);
 		//
-		 initalDot();// 初始化小圆点
+		initalDot();// 初始化小圆点
 		//
 		// mPoserViewPager = (ViewPager) mPosterChannel
 		// .findViewById(R.id.posterviewpages);
@@ -300,6 +402,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		mInfoViewPager.setAdapter(new ExhibitsPageAdapter(mInfoPages));
 		mInfoViewPager.setOnPageChangeListener(new ExhibitsPageChangeListener(
 				mItem));
+
 	}
 
 	/**
@@ -327,19 +430,20 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
 
-		switch(((Integer) param[1])) {
+		switch (((Integer) param[1])) {
 		case 1: {
 			ArrayList<Bitmap> bitmapsList = (ArrayList<Bitmap>) param[0];
 			UpdatePoster(CreatePosterView(bitmapsList));
-		}break;
 		}
-		
+			break;
+		}
+
 	}
 
 	/*
 	 * 百度PCS验证部份
 	 */
-	private void getBaiduOAuth() {
+	public void getBaiduOAuth() {
 		mBaiduoauth = new BaiduOAuthViaDialog(APP_KEY);
 
 		mBaiduoauth.startDialogAuth(ExhiHomeActivity.this, new String[] {
@@ -372,6 +476,51 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 						.show();
 			}
 		});
+	}
+	
+	
+	/**
+	 * 读卡的方法
+	 */
+	
+	@Override
+	public void onNewIntent(Intent intent) {
+		setIntent(intent);
+		resolveIntent(intent);
+
+	}
+
+	void resolveIntent(Intent intent) {
+		// Parse the intent
+		String action = intent.getAction();
+		if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+			// Get an instance of the TAG from the NfcAdapter
+			Tag productTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+			MifareClassic mfc = MifareClassic.get(productTag);
+
+			try {
+				// Conncet to card
+				mfc.connect();
+				boolean auth = false;
+				auth = mfc.authenticateSectorWithKeyA(0,
+						MifareClassic.KEY_DEFAULT);
+
+				if (auth) {
+					byte[] data = mfc.readBlock(1);
+					char[] cData = TransistionUtil.getChars(data);
+					String mBarcodeStr = String.valueOf(cData).trim(); // 注意要去掉空格。。
+					//DownloadInfo();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				Toast.makeText(getApplicationContext(), "读卡失败\n请重新刷取卡片",
+						Toast.LENGTH_SHORT).show();
+			}
+		} else {
+			
+		}
+
 	}
 
 }

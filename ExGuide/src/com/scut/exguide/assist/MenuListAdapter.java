@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+import com.scut.exguide.ui.ExGuideTutorialsActivity;
+import com.scut.exguide.ui.ExhiHomeActivity;
 import com.scut.exguide.ui.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -130,39 +135,52 @@ public class MenuListAdapter extends BaseAdapter {
 
 	private void gotoActivity(int position) {
 		Intent intent = new Intent();
-//		switch (position) {
-//		case 0:
-//
-//			if (this.pressedId == 0) {
-//				ACBUWAPageActivity activity = (ACBUWAPageActivity) context;
-//				activity.getScrollView().clickMenuBtn();
-//			} else {
-//				intent.setClass(context, ACBUWAPageActivity.class);
-//				context.startActivity(intent);
-//				context.overridePendingTransition(R.anim.push_in,
-//						R.anim.push_out);
-//				context.finish();
-//			}
-//
-//			break;
-//		/*----------------------------------------------------*/
-//		case 1:
-//			if (this.pressedId == 1) {
-//				CAROLPageActivity activity = (CAROLPageActivity) context;
-//				activity.getScrollView().clickMenuBtn();
-//			} else {
-//				intent.setClass(context, CAROLPageActivity.class);
-//				context.startActivity(intent);
-//				context.overridePendingTransition(R.anim.push_in,
-//						R.anim.push_out);
-//				context.finish();
-//			}
-//			break;
-//		/*----------------------------------------------------*/
-//		default:
-//			intent.setClass(context, XMUPageActivity.class);
-//			context.startActivity(intent);
-//		}
+		switch (position) {
+		case 0:
+			((ExhiHomeActivity) context).getBaiduOAuth();
+			break;
+		/*----------------------------------------------------*/
+		case 1:
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+			intent.putExtra(Intent.EXTRA_TEXT, "展会宝");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(Intent.createChooser(intent, "分享"));
+			break;
+		/*----------------------------------------------------*/
+		case 4:
+			intent.setClass(context, ExGuideTutorialsActivity.class);
+			context.startActivity(intent);
+			break;
+		case 5:
+			AlertDialog alertDialog = new AlertDialog.Builder(context)
+					.setTitle("提示")
+					.setMessage("是否退出本程序")
+					.setPositiveButton(
+							"确定",
+							new android.content.DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									context.finish();
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									return;
+								}
+							}).create();
+			alertDialog.show();
+			break;
+		default:
+
+		}
 	}
 
 	private void changeState(int position) {
@@ -205,7 +223,7 @@ public class MenuListAdapter extends BaseAdapter {
 		for (int i = 0; i < this.itemCount; i++) {
 			this.isPressed[i] = false;
 		}
-		
+
 		this.isPressed[this.pressedId] = true;
 		this.listInflater = LayoutInflater.from(context);
 	}

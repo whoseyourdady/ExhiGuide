@@ -32,6 +32,12 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
+        
+        <activity
+            android:name=".ExGuideTutorialsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
             android:name=".ExhiVedioSelectListActivity"
             android:label="@string/app_name"

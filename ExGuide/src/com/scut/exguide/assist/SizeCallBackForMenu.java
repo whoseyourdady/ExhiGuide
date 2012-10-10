@@ -1,5 +1,6 @@
 package com.scut.exguide.assist;
 
+import android.util.Log;
 import android.widget.Button;
 
 public class SizeCallBackForMenu implements SizeCallBack {
@@ -15,7 +16,7 @@ public class SizeCallBackForMenu implements SizeCallBack {
 	@Override
 	public void onGlobalLayout() {
 		// TODO Auto-generated method stub
-		this.menuWidth = this.menu.getMeasuredWidth() + 80;
+		this.menuWidth = this.menu.getMeasuredWidth() + 240;
 	}
 
 	@Override
@@ -24,6 +25,7 @@ public class SizeCallBackForMenu implements SizeCallBack {
 		dims[0] = width;
 		dims[1] = height;
 
+		Log.d("daffdsaf", "fasfdasdfafsdf");
 		/* 视图不是中间视图 */
 		if (idx != 1) {
 			dims[0] = width - this.menuWidth;
