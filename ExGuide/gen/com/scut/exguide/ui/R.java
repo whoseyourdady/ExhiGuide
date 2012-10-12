@@ -91,12 +91,12 @@ public final class R {
     }
     public static final class id {
         public static final int arrow_image=0x7f080008;
-        public static final int city_text=0x7f08000c;
-        public static final int country_text=0x7f08000a;
+        public static final int city_text=0x7f08000b;
         public static final int dotviewgroup=0x7f08001f;
         public static final int exhibition_name_text=0x7f080009;
         public static final int exhibitionname=0x7f080022;
         public static final int guidePages=0x7f080023;
+        public static final int hall_text=0x7f08000c;
         public static final int img=0x7f080013;
         public static final int info=0x7f080002;
         public static final int infol=0x7f08000e;
@@ -119,7 +119,7 @@ public final class R {
         public static final int poster=0x7f080000;
         public static final int posterloading=0x7f080020;
         public static final int posterviewpages=0x7f08001e;
-        public static final int province_text=0x7f08000b;
+        public static final int province_text=0x7f08000a;
         public static final int roundlistview02=0x7f080012;
         public static final int show=0x7f08001c;
         public static final int testB=0x7f080021;

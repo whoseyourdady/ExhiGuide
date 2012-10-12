@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-
 import com.baidu.oauth2.BaiduOAuth;
 import com.baidu.oauth2.BaiduOAuthViaDialog;
 import com.baidu.oauth2.BaiduOAuthViaDialog.DialogListener;
@@ -12,14 +11,19 @@ import com.baidu.pcs.PcsClient;
 import com.scut.exguid.multithread.DownloadImage;
 import com.scut.exguide.assist.ExhibitsPageAdapter;
 import com.scut.exguide.assist.ExhibitsPageChangeListener;
+import com.scut.exguide.assist.ListViewAdapter_exhibition;
 import com.scut.exguide.assist.MenuListAdapter;
 import com.scut.exguide.assist.MyActivity;
 import com.scut.exguide.assist.PosterPageAdapter;
 import com.scut.exguide.assist.PosterPageChangeListener;
+import com.scut.exguide.entity.Exhibition;
+import com.scut.exguide.json.ExGuideJSON;
 import com.scut.exguide.utils.TransistionUtil;
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +32,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
+import android.os.StrictMode;
 
 import android.support.v4.view.ViewPager;
 
@@ -67,6 +72,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	private PcsClient mPcsClient = null;// 客户端对象
 	private BaiduOAuth mBaiduoauth;// 百度封装的验证
 
+	public static ExGuideJSON api = new ExGuideJSON();
+
 	private final static String TAG = "ExhiHomeActivity";
 	private LayoutInflater inflater;
 
@@ -105,11 +112,25 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	private ListView menuList;
 	private MenuListAdapter menuListAdapter;
 
+	private ArrayList<Exhibition> list;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+				.detectDiskReads().detectDiskWrites().detectNetwork() // or
+																		// .detectAll()
+																		// for
+																		// all
+																		// detectable
+																		// problems
+				.penaltyLog().build());
+		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+				.detectLeakedSqlLiteObjects().penaltyLog().penaltyDeath()
+				.build());
 
 		inflater = LayoutInflater.from(this);
 		main = (ViewGroup) inflater.inflate(R.layout.homeactivity, null);
@@ -131,18 +152,44 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		// this.menuList);
 		// this.scrollView.setMenuBtn(this.menuBtn);
 
+		setContentView(main);
+
+		inialDialog().show();
+
 		initalLayout();
 
 		initalInfo();
 
 		initalItemHeader();
-		setContentView(main);
 
 		String[] url = {
 				"http://pic.iresearch.cn/news/0468/20120903/0082@56936.jpg",
 				"http://nuomi.xnimg.cn/upload/deal//V_L/34075.jpg" };
 		new DownloadImage(this).execute(url);
 
+	}
+
+	protected Dialog inialDialog() {
+
+		list = api.getExhibitions();
+
+		Dialog dialog = null;
+		Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("请选择会场");
+		ListViewAdapter_exhibition adapter = new ListViewAdapter_exhibition(
+				this, list);
+		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int which) {
+				Toast.makeText(getApplicationContext(), which + "", Toast.LENGTH_LONG).show();
+				Log.d("dd", which+"");
+			}
+		};
+
+		builder.setAdapter(adapter, listener);
+		dialog = builder.create();
+
+		return dialog;
 	}
 
 	private OnClickListener onClickListener = new OnClickListener() {
@@ -229,7 +276,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
@@ -477,12 +524,11 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			}
 		});
 	}
-	
-	
+
 	/**
 	 * 读卡的方法
 	 */
-	
+
 	@Override
 	public void onNewIntent(Intent intent) {
 		setIntent(intent);
@@ -510,7 +556,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 					byte[] data = mfc.readBlock(1);
 					char[] cData = TransistionUtil.getChars(data);
 					String mBarcodeStr = String.valueOf(cData).trim(); // 注意要去掉空格。。
-					//DownloadInfo();
+					// DownloadInfo();
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -518,7 +564,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-			
+
 		}
 
 	}
