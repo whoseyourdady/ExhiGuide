@@ -14,16 +14,16 @@ public class ExhiVedioSelectListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		setContentView(R.layout.listview);
-		
+
 		RoundListViewAdapter_video viedoAdapter = new RoundListViewAdapter_video(
 				this);
 
 		listviewVideo = (ListView) findViewById(R.id.roundlistview02);
 		listviewVideo.setAdapter(viedoAdapter);
-			}
+	}
 
 }

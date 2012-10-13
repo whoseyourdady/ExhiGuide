@@ -86,18 +86,7 @@ public class RoundListViewAdapter_attribute extends BaseAdapter implements
 				Intent intent = new Intent();
 
 				// ÑÕÉ«
-				switch (position) {
-				case 0:
-					ll.setBackgroundResource(R.drawable.app_list_corner_round_top);
-					break;
-
-				default:
-					if (position == strs1.length - 1) {
-						ll.setBackgroundResource(R.drawable.app_list_corner_round_bottom);
-					} else {
-						ll.setBackgroundResource(R.drawable.app_list_corner_shape);
-					}
-				}
+				ll.setBackgroundResource(R.drawable.app_list_corner_shape);
 
 				try {
 					context.startActivity(intent);

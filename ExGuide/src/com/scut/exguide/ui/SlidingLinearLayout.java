@@ -2,6 +2,7 @@ package com.scut.exguide.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
@@ -27,6 +28,7 @@ public class SlidingLinearLayout extends LinearLayout {
 		else if(MenuHorizontalScrollView.menuOut)
 			return true;
 		else 
+			Log.d("menu", "ddddd");
 			return super.onInterceptTouchEvent(ev);
 	}
 

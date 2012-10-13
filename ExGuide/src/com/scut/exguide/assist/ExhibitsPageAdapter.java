@@ -10,6 +10,8 @@ import android.view.View;
 public class ExhibitsPageAdapter extends PagerAdapter {
 
 	private ArrayList<View> mPageViews;// ÓÃÓÚ·­Ò³µÄview
+	
+	
 
 	public ExhibitsPageAdapter( ArrayList<View> viewList) {
 		mPageViews = viewList;
