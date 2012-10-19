@@ -57,7 +57,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/btn_home_bg" />
+                android:background="@drawable/iknowbutton" />
         </RelativeLayout>
     </LinearLayout>
 

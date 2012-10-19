@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.scut.exguide.entity.Exhibition;
+import com.scut.exguide.entity.ExhibitionDetail;
 
 import android.util.Log;
 
@@ -19,8 +20,16 @@ public class ExGuideJSON {
 
 	public static final String BASE_URL = "";
 
-	public JSONObject getExhibitioninfo(int Id) {
-		String url = BASE_URL + "?option=GetExhibition" + "&id=" + Id;
+//	public JSONObject getPostersOfThing(int templateId, int id) {
+//
+//	}
+//
+//	public JSONObject getVediosOfThing(int templateId, int id) {
+//
+//	}
+
+	public JSONObject getThingOfTemplate(int templateId, int id) {
+		String url = BASE_URL + "?option=GetExhibition" + "&id=" + id;
 		HttpGet request = new HttpGet(url);
 		JSONObject jsonObject = null;
 		/* StringBulder,jdk_1.5新增，用法基本跟StringBuffer一样，但效率要比StringBuffer高得多 */
@@ -61,7 +70,16 @@ public class ExGuideJSON {
 
 	}
 
-	public JSONObject getThings(int Id) {
+	/**
+	 * 通过ID返回展会的信息
+	 * 
+	 * @param Id
+	 *            展会ID
+	 * @return 展会实体对象
+	 * @author Leeforall
+	 */
+	public ExhibitionDetail getExhibitionInfo(int Id) {
+		ExhibitionDetail data = null;
 		String url = BASE_URL + "?option=GetExhibition" + "&id=" + Id;
 		HttpGet request = new HttpGet(url);
 		JSONObject jsonObject = null;
@@ -85,18 +103,22 @@ public class ExGuideJSON {
 					sbuilder.append(s);
 				}
 				Log.i("json_str", sbuilder.toString());
+				jsonObject = new JSONObject(sbuilder.toString());
+				// To create an Instance of ExhibitionInfo
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return jsonObject;
+		return data;
 
 	}
 
 	/**
 	 * 获取展会信息的接口，
 	 * 
-	 * @return 返回JSONArray的对象需要调整
+	 * @return 返回Exhibition的ArrayList对象需要调整
+	 * @author Leeforall
 	 */
 	public ArrayList<Exhibition> getExhibitions() {
 		ArrayList<Exhibition> datas = new ArrayList<Exhibition>();
