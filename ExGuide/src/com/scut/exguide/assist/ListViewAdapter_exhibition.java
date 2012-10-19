@@ -27,6 +27,7 @@ public class ListViewAdapter_exhibition extends BaseAdapter implements
 		this.context = context;
 		this.inflater = LayoutInflater.from(context);
 		this.list = list;
+		
 	}
 
 	@Override
