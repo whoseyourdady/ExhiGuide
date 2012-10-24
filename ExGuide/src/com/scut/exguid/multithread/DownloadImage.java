@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import com.scut.exguide.assist.MyActivity;
 import com.scut.exguide.ui.ExhiHomeActivity;
+import com.scut.exguide.ui.ExhibitActivity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,15 +25,27 @@ public class DownloadImage extends
 		AsyncTask<String[], java.lang.Void, ArrayList<Bitmap>> {
 
 	public MyActivity mInstance;
+	private int entrance;
 
-	public DownloadImage(MyActivity Instance) {
-		mInstance = Instance;
+	public DownloadImage(MyActivity Instance, int entrance) {
+		this.mInstance = Instance;
+		this.entrance = entrance;
 	}
-
+	
 	@Override
 	protected void onPreExecute() {
 		// TODO Auto-generated method stub
-		((ExhiHomeActivity) mInstance).setProgressBar(true);
+		switch (entrance) {
+		case 1:
+			((ExhiHomeActivity) mInstance).setProgressBar(true);
+			break;
+		case 2:
+			((ExhibitActivity) mInstance).setProgressBar(true);
+			break;
+		default:
+			
+
+		}
 		super.onPreExecute();
 
 	}
@@ -58,7 +71,17 @@ public class DownloadImage extends
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
 		mInstance.Update(result, 1);
-		((ExhiHomeActivity) mInstance).setProgressBar(false);
+		switch (entrance) {
+		case 1:
+			((ExhiHomeActivity) mInstance).setProgressBar(false);
+			break;
+		case 2:
+			((ExhibitActivity) mInstance).setProgressBar(false);
+			break;
+		default:
+			
+
+		}
 
 	}
 

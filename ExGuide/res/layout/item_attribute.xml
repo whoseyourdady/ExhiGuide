@@ -25,7 +25,7 @@
             android:id="@+id/navigation_more_checklist02_textview"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="right"
             android:layout_toRightOf="@id/navigation_more_checklist01_textview"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
