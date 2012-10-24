@@ -16,7 +16,9 @@ import com.scut.exguide.assist.MenuListAdapter;
 import com.scut.exguide.assist.MyActivity;
 import com.scut.exguide.assist.PosterPageAdapter;
 import com.scut.exguide.assist.PosterPageChangeListener;
+import com.scut.exguide.entity.Exhibit;
 import com.scut.exguide.entity.Exhibition;
+import com.scut.exguide.entity.ExhibitionDetail;
 import com.scut.exguide.json.ExGuideJSON;
 import com.scut.exguide.utils.TransistionUtil;
 
@@ -113,6 +115,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	private MenuListAdapter menuListAdapter;
 
 	private ArrayList<Exhibition> list;
+	public static ExhibitionDetail exhibition;
+	public static Exhibit exhibit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,22 +158,12 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		setContentView(main);
 
-		inialDialog().show();
-
 		initalLayout();
-
-		initalInfo();
-
-		initalItemHeader();
-
-		String[] url = {
-				"http://pic.iresearch.cn/news/0468/20120903/0082@56936.jpg",
-				"http://nuomi.xnimg.cn/upload/deal//V_L/34075.jpg" };
-		new DownloadImage(this).execute(url);
+		inialDialog(this).show();
 
 	}
 
-	protected Dialog inialDialog() {
+	protected Dialog inialDialog(final MyActivity Instance) {
 
 		list = api.getExhibitions();
 
@@ -181,8 +175,16 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int which) {
-				Toast.makeText(getApplicationContext(), which + "", Toast.LENGTH_LONG).show();
-				Log.d("dd", which+"");
+				Toast.makeText(getApplicationContext(),
+						list.get(which).getId() + "", Toast.LENGTH_LONG).show();
+				Log.d("dd", list.get(which).getId() + "");
+				exhibition = api.getExhibitionInfo(list.get(which).getId());
+				initaiTitle(exhibition.getmName());
+				initalInfo();
+				initalItemHeader();
+				if (exhibition.getmPosterurl() != null)
+					new DownloadImage(Instance, 1).execute(exhibition
+							.getmPosterurl());
 			}
 		};
 
@@ -219,7 +221,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, ONE, 0, "绑定百度"); // 设置文字与图标
 		menu.add(0, TWO, 0, "分享");
-		menu.add(0, THREE, 0, "设置");
+		menu.add(0, THREE, 0, "重选会场");
 		menu.add(0, FOUR, 0, "帮助");
 		menu.add(0, FIVE, 0, "退出");
 		return super.onCreateOptionsMenu(menu);
@@ -242,6 +244,9 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			startActivity(Intent.createChooser(intent, "分享"));
 			break;
 		/*----------------------------------------------------*/
+		case 3:
+			inialDialog(this).show();
+			break;
 		case 4:
 			intent.setClass(this, ExGuideTutorialsActivity.class);
 			startActivity(intent);
@@ -334,6 +339,10 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		mExhibitionName = (TextView) title.findViewById(R.id.exhibitionname);
 	}
 
+	private void initaiTitle(String title) {
+		mExhibitionName.setText(title);
+	}
+
 	/**
 	 * 初始化下部产品介绍
 	 */
@@ -349,18 +358,24 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		Intent intent = new Intent();
 		intent.setClass(ExhiHomeActivity.this, ExhiAttributeListActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("entrance", "home");
 
 		Intent intent2 = new Intent();
 		intent2.setClass(ExhiHomeActivity.this,
 				ExhiVedioSelectListActivity.class);
 		intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent2.putExtra("entrance", "home");
 
 		mInfoPages = new ArrayList<View>();
 		mInfoPages.add(getLocalActivityManager().startActivity(
 				"ExhiAttributeListActivity", intent).getDecorView());
-
+		((ExhiAttributeListActivity) getLocalActivityManager().getActivity(
+				"ExhiAttributeListActivity")).Update(exhibition);
+		
 		mInfoPages.add(getLocalActivityManager().startActivity(
 				"ExhiVedioSelectListActivity", intent2).getDecorView());
+		((ExhiVedioSelectListActivity) getLocalActivityManager().getActivity(
+				"ExhiVedioSelectListActivity")).Update(exhibition);
 
 	}
 
@@ -432,8 +447,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	 * 初始化itemheader
 	 */
 	private void initalItemHeader() {
-		// mItemHeader = (ViewGroup)
-		// mInfoChannel.findViewById(R.id.item_header);
 
 		mItem = new LinearLayout[mInfoPages.size()];
 		for (int i = 0; i < 2; i++) {
@@ -523,50 +536,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 						.show();
 			}
 		});
-	}
-
-	/**
-	 * 读卡的方法
-	 */
-
-	@Override
-	public void onNewIntent(Intent intent) {
-		setIntent(intent);
-		resolveIntent(intent);
-
-	}
-
-	void resolveIntent(Intent intent) {
-		// Parse the intent
-		String action = intent.getAction();
-		if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-			// Get an instance of the TAG from the NfcAdapter
-			Tag productTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-			MifareClassic mfc = MifareClassic.get(productTag);
-
-			try {
-				// Conncet to card
-				mfc.connect();
-				boolean auth = false;
-				auth = mfc.authenticateSectorWithKeyA(0,
-						MifareClassic.KEY_DEFAULT);
-
-				if (auth) {
-					byte[] data = mfc.readBlock(1);
-					char[] cData = TransistionUtil.getChars(data);
-					String mBarcodeStr = String.valueOf(cData).trim(); // 注意要去掉空格。。
-					// DownloadInfo();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-				Toast.makeText(getApplicationContext(), "读卡失败\n请重新刷取卡片",
-						Toast.LENGTH_SHORT).show();
-			}
-		} else {
-
-		}
-
 	}
 
 }

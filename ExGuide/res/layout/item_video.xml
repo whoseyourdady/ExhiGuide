@@ -17,9 +17,9 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/weibo_xinlang" >
+            android:src="@android:drawable/ic_menu_slideshow" >
         </ImageView>
-        
+
         <ImageView
             android:id="@+id/arrow_image"
             android:layout_width="30dp"
@@ -31,22 +31,21 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/arrow_up" >
         </ImageView>
-        
+
         <TextView
             android:id="@+id/navigation_more_checklist01_textview"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/video_image"    
-            android:layout_toLeftOf="@id/arrow_image"  
             android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@id/arrow_image"
+            android:layout_toRightOf="@id/video_image"
             android:text="靛蓝asdasdasdds"
             android:textSize="15sp" >
         </TextView>
-        
     </RelativeLayout>
 
 </LinearLayout>

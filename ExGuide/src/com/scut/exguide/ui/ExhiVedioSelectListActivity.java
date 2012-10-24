@@ -1,14 +1,22 @@
 package com.scut.exguide.ui;
 
-import com.scut.exguide.assist.RoundListViewAdapter_video;
+import com.scut.exguide.assist.Exhibit_attribute;
+import com.scut.exguide.assist.Exhibit_video;
+import com.scut.exguide.assist.Exhibition_attribute;
+import com.scut.exguide.assist.Exhibition_video;
+import com.scut.exguide.assist.MyActivity;
+import com.scut.exguide.entity.ExhibitionDetail;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.ListView;
 
-public class ExhiVedioSelectListActivity extends Activity {
+public class ExhiVedioSelectListActivity extends Activity implements MyActivity {
 
 	private ListView listviewVideo;// ÊÓÆµµÄlistview
+	private ExhibitionDetail exhibition;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,11 +27,41 @@ public class ExhiVedioSelectListActivity extends Activity {
 
 		setContentView(R.layout.listview);
 
-		RoundListViewAdapter_video viedoAdapter = new RoundListViewAdapter_video(
-				this);
-
 		listviewVideo = (ListView) findViewById(R.id.roundlistview02);
-		listviewVideo.setAdapter(viedoAdapter);
+		Intent intent = getIntent();
+		String entrance = intent.getStringExtra("entrance");
+		listviewVideo = (ListView) findViewById(R.id.roundlistview02);
+		if (entrance.equals("home")) {
+			
+		}
+		if (entrance.equals("card")) {
+			String[] names = ExhibitActivity.exhibit.getvNames();
+			String[] urls = ExhibitActivity.exhibit.getvUrls();
+			if (names != null && urls != null) {
+				Exhibit_video videoAdapter = new Exhibit_video(this, names,
+						urls);
+				listviewVideo.setAdapter(videoAdapter);
+			}
+		}
+	}
+
+	@Override
+	public String getTag() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void Update(Object... param) {
+		// TODO Auto-generated method stub
+		exhibition=(ExhibitionDetail)param[0];
+		String[] names = exhibition.getmVedioname();
+		String[] urls = exhibition.getmVediourl();
+		if (names != null && urls != null) {
+			Exhibition_video videoAdapter = new Exhibition_video(this, urls,
+					names);
+			listviewVideo.setAdapter(videoAdapter);
+		}
 	}
 
 }

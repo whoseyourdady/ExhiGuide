@@ -20,7 +20,6 @@
         android:layout_margin="2dip"
         android:layout_marginLeft="10dip"
         android:gravity="left"
-        android:text="2012中国婚博会"
         android:textSize="15sp" />
 
 </LinearLayout>
