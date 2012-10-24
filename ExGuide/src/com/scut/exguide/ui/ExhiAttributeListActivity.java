@@ -70,12 +70,11 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 	@Override
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
-		String[] values = new String[3];
+		String[] values = new String[1];
 		exhibition=(ExhibitionDetail)param[0];
 		values[0] = exhibition.getmDescription();
-		values[2] = "2012年10月10号";
-		values[1] = "一汽大众/广州本田/GMC/保时捷/法拉利";
-		final String[] keys = { "展会描述", "参展商", "日期" };
+
+		final String[] keys = { "展会描述" };
 		if (keys != null && values != null) {
 			Exhibition_attribute attributeAdapter = new Exhibition_attribute(
 					this, keys, values);
