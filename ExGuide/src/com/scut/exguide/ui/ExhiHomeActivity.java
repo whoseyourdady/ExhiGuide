@@ -1,6 +1,5 @@
 package com.scut.exguide.ui;
 
-
 import java.util.ArrayList;
 
 import com.baidu.oauth2.BaiduOAuth;
@@ -19,7 +18,6 @@ import com.scut.exguide.entity.Exhibit;
 import com.scut.exguide.entity.Exhibition;
 import com.scut.exguide.entity.ExhibitionDetail;
 import com.scut.exguide.json.ExGuideJSON;
-
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
@@ -159,9 +157,10 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		initalLayout();
 		inialDialog(this).show();
-
+     
 	}
 
+	@SuppressWarnings("null")
 	protected Dialog inialDialog(final MyActivity Instance) {
 
 		list = api.getExhibitions();
@@ -175,7 +174,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int which) {
 				Toast.makeText(getApplicationContext(),
-						list.get(which).getName() + "", Toast.LENGTH_LONG).show();
+						list.get(which).getName() + "", Toast.LENGTH_LONG)
+						.show();
 				Log.d("dd", list.get(which).getId() + "");
 				exhibition = api.getExhibitionInfo(list.get(which).getId());
 				initaiTitle(exhibition.getmName());
@@ -187,9 +187,28 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			}
 		};
 
+	
+		
 		builder.setAdapter(adapter, listener);
+		
 		dialog = builder.create();
 
+		dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+			@Override
+			public boolean onKey(DialogInterface dialog, int keyCode,
+					KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_BACK) {
+					KeyEvent.
+					Toast.makeText(getApplicationContext(),
+							"请选择你现在所处的场景"+ "", Toast.LENGTH_LONG)
+							.show();
+					return true;
+				} else {
+					return false; // 默认返回 false
+				}
+			}
+		});
+		
 		return dialog;
 	}
 
@@ -370,7 +389,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 				"ExhiAttributeListActivity", intent).getDecorView());
 		((ExhiAttributeListActivity) getLocalActivityManager().getActivity(
 				"ExhiAttributeListActivity")).Update(exhibition);
-		
+
 		mInfoPages.add(getLocalActivityManager().startActivity(
 				"ExhiVedioSelectListActivity", intent2).getDecorView());
 		((ExhiVedioSelectListActivity) getLocalActivityManager().getActivity(
@@ -439,7 +458,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 				DotImageViews[i]
 						.setBackgroundResource(R.drawable.page_indicator);
 			}
-			
+
 			mDotgroup.addView(DotImageViews[i]);
 		}
 	}
@@ -512,8 +531,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 			@Override
 			public void onCancel() {
-				Toast.makeText(getApplicationContext(),
-						"User  cancel the request", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "用户取消百度PCS绑定",
+						Toast.LENGTH_LONG).show();
 			}
 
 			/*
@@ -526,7 +545,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			@Override
 			public void onComplete(Bundle values) {
 				String accessToken = values.getString("access_token");
-				Toast.makeText(getApplicationContext(), accessToken,
+				Toast.makeText(getApplicationContext(), "完成绑定",
 						Toast.LENGTH_LONG).show();
 
 			}

@@ -11,8 +11,11 @@ import com.scut.exguide.entity.ExhibitionDetail;
 import com.scut.exguide.json.ExGuideJSON;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.ListView;
 
@@ -80,6 +83,15 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 					this, keys, values);
 			listviewAttribute.setAdapter(attributeAdapter);
 		}
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			return false;
+		}
+	
+		return false;
 	}
 
 }
