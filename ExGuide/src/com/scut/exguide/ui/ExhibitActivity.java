@@ -1,30 +1,19 @@
 package com.scut.exguide.ui;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import com.baidu.oauth2.BaiduOAuth;
-import com.baidu.oauth2.BaiduOAuthViaDialog;
-import com.baidu.oauth2.BaiduOAuthViaDialog.DialogListener;
-import com.baidu.pcs.PcsClient;
 import com.scut.exguid.multithread.DownloadImage;
 import com.scut.exguide.assist.ExhibitsPageAdapter;
 import com.scut.exguide.assist.ExhibitsPageChangeListener;
-import com.scut.exguide.assist.ListViewAdapter_exhibition;
-import com.scut.exguide.assist.MenuListAdapter;
 import com.scut.exguide.assist.MyActivity;
 import com.scut.exguide.assist.PosterPageAdapter;
 import com.scut.exguide.assist.PosterPageChangeListener;
 import com.scut.exguide.entity.Exhibit;
-import com.scut.exguide.entity.Exhibition;
-import com.scut.exguide.entity.ExhibitionDetail;
 import com.scut.exguide.json.ExGuideJSON;
 import com.scut.exguide.utils.TransistionUtil;
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,22 +27,19 @@ import android.os.StrictMode;
 
 import android.support.v4.view.ViewPager;
 
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,13 +52,6 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 	final static int THREE = Menu.FIRST + 2;
 	final static int FOUR = Menu.FIRST + 3;
 	final static int FIVE = Menu.FIRST + 4;
-	/*
-	 * 百度PCS验证
-	 */
-	final static private String APP_KEY = "GqRQpN9bayVt6yIAzrqsUbnU";
-	final static private String APP_ROOT = "/apps/展会导游宝";
-	private PcsClient mPcsClient = null;// 客户端对象
-	private BaiduOAuth mBaiduoauth;// 百度封装的验证
 
 	public static ExGuideJSON api = new ExGuideJSON();
 
@@ -80,7 +59,6 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 	private LayoutInflater inflater;
 
 	private ViewPager mPoserViewPager; // viewpager控件
-	private ArrayList<View> mPosterPages;// 用于翻页的view
 
 	// 下部产品介绍中的view
 	private ViewPager mInfoViewPager;
@@ -106,6 +84,7 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 
 	// 展会的名字
 	private TextView mExhibitionName;
+	private Dialog popUpDialog;
 
 	public static Exhibit exhibit;
 
@@ -297,6 +276,17 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 			View temp = inflater.inflate(R.layout.poster, null);
 			_imageView = (ImageView) temp.findViewById(R.id.show);
 			_imageView.setImageBitmap(bitmaps.get(i));
+			final Bitmap poster = bitmaps.get(i);
+			_imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					create(poster);
+					show();
+
+				}
+			});
 			viewList.add(temp);
 		}
 		return viewList;
@@ -367,6 +357,7 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 	/**
 	 * 1是更新海报
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
@@ -434,4 +425,31 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 
 	}
 
+	private void show() {
+		popUpDialog.show();
+	}
+
+	private void create(Bitmap poster) {
+		popUpDialog = new Dialog(this);
+		popUpDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		popUpDialog.getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		popUpDialog.setContentView(R.layout.image_dialog);
+		initImageView(poster);
+	}
+
+	private void initImageView(Bitmap poster) {
+		ImageView image = (ImageView) popUpDialog.findViewById(R.id.image);
+		image.setImageBitmap(poster);
+		image.setOnClickListener(new ImageView.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (popUpDialog != null) {
+					popUpDialog.dismiss();
+				}
+			}
+		});
+	}
 }

@@ -36,7 +36,7 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 		String entrance = intent.getStringExtra("entrance");
 		listviewAttribute = (ListView) findViewById(R.id.roundlistview02);
 		if (entrance.equals("home")) {
-			
+
 		}
 		if (entrance.equals("card")) {
 			String[] values = ExhibitActivity.exhibit.getAttributeValues();
@@ -51,9 +51,12 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 				if (ExhibitActivity.exhibit.getAttachmenturls().length != 0) {
 					String[] attachments = ExhibitActivity.exhibit
 							.getAttachmenturls();
+					String[] attachmentNames = ExhibitActivity.exhibit
+							.getAttachmentNames();
 					for (int i = 0; i < attachments.length; i++) {
-						valueList.add(attachments[i]);
-						nameList.add("附件" + (i + 1));
+						valueList.add(attachmentNames[i] + "\n"
+								+ attachments[i]);
+						nameList.add("附件");
 					}
 				}
 
@@ -74,7 +77,7 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
 		String[] values = new String[1];
-		exhibition=(ExhibitionDetail)param[0];
+		exhibition = (ExhibitionDetail) param[0];
 		values[0] = exhibition.getmDescription();
 
 		final String[] keys = { "展会描述" };
@@ -84,13 +87,13 @@ public class ExhiAttributeListActivity extends Activity implements MyActivity {
 			listviewAttribute.setAdapter(attributeAdapter);
 		}
 	}
-	
+
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			return false;
 		}
-	
+
 		return false;
 	}
 

@@ -121,10 +121,19 @@ public class ExGuideJSON {
 						array = jsonObject.getJSONArray("attachmenturl");
 						String[] strs7 = new String[array.length()];
 						for (int j = 0; j < array.length(); j++) {
-							strs7[j] = array.getString(j);
+							strs7[j] = ATTACHMENT + array.getString(j);
 						}
 						data.setAttachmenturls(strs7);
 						break;
+					case 8:
+						Log.i("attachmentName",
+								jsonObject.getString("attachmentname"));
+						array = jsonObject.getJSONArray("attachmentname");
+						String[] strs8 = new String[array.length()];
+						for (int j = 0; j < array.length(); j++) {
+							strs8[j] =array.getString(j);
+						}
+						data.setAttachmentNames(strs8);
 					default:
 					}
 				}

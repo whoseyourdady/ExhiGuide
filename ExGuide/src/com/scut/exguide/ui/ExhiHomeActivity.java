@@ -202,7 +202,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			public boolean onKey(DialogInterface dialog, int keyCode,
 					KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK) {
-					KeyEvent.
 					Toast.makeText(getApplicationContext(),
 							"请选择你现在所处的场景"+ "", Toast.LENGTH_LONG)
 							.show();

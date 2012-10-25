@@ -5,7 +5,7 @@
     android:background="#FFFFFFFF"
     android:orientation="vertical" >
 
-    <!--<ImageView
+    <ImageView
         android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,9 +13,5 @@
         android:maxHeight="800dip"
         android:maxWidth="480dip"
         android:padding="1dip" />
-      -->
-      <android.support.v4.view.ViewPager
-            android:id="@+id/popimage"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+
 </LinearLayout>
