@@ -29,7 +29,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginRight="10dip"
             android:layout_marginTop="10dp"
-            android:background="@drawable/arrow_up" >
+             android:src="@android:drawable/stat_sys_upload" >
         </ImageView>
 
         <TextView

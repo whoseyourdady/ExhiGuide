@@ -1,7 +1,6 @@
 package com.scut.exguide.ui;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 
 import com.baidu.oauth2.BaiduOAuth;
@@ -20,7 +19,7 @@ import com.scut.exguide.entity.Exhibit;
 import com.scut.exguide.entity.Exhibition;
 import com.scut.exguide.entity.ExhibitionDetail;
 import com.scut.exguide.json.ExGuideJSON;
-import com.scut.exguide.utils.TransistionUtil;
+
 
 import android.app.ActivityGroup;
 import android.app.AlertDialog;
@@ -180,7 +179,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int which) {
 				Toast.makeText(getApplicationContext(),
-						list.get(which).getId() + "", Toast.LENGTH_LONG).show();
+						list.get(which).getName() + "", Toast.LENGTH_LONG).show();
 				Log.d("dd", list.get(which).getId() + "");
 				exhibition = api.getExhibitionInfo(list.get(which).getId());
 				initaiTitle(exhibition.getmName());
@@ -442,6 +441,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	 */
 	private void initalDot() {
 		// 初始化小圆点
+		mDotgroup.removeAllViews();
 		for (int i = 0; i < DotImageViews.length; i++) {
 			_imageView = new ImageView(ExhiHomeActivity.this);
 			_imageView.setLayoutParams(new LayoutParams(20, 20));
@@ -455,6 +455,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 				DotImageViews[i]
 						.setBackgroundResource(R.drawable.page_indicator);
 			}
+			
 			mDotgroup.addView(DotImageViews[i]);
 		}
 	}

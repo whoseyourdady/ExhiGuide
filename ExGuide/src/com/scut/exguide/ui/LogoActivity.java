@@ -26,7 +26,7 @@ public class LogoActivity extends Activity {
 
 		// ∂®“Âsplash ∂Øª≠
 		AlphaAnimation aa = new AlphaAnimation(0.1f, 1.0f);
-		aa.setDuration(3000);
+		aa.setDuration(2000);
 		this.findViewById(R.id.ImageView01).startAnimation(aa);
 		aa.setAnimationListener(new AnimationListener() {
 
