@@ -33,6 +33,7 @@
             android:layout_marginRight="10dip"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            android:autoLink="web"
             android:text="靛蓝asdasdasdds"
             android:textSize="15sp" >
         </TextView>
