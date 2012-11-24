@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.scut.exguide.ui.R;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -13,6 +15,7 @@ import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
@@ -71,28 +74,41 @@ public class Exhibit_attribute extends BaseAdapter implements ListAdapter {
 			tv2.setText(ss);
 			// 设置TextView可点击
 			tv2.setMovementMethod(LinkMovementMethod.getInstance());
+			tv2.setOnLongClickListener(new OnLongClickListener() {
+
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					AlertDialog alertDialog = new AlertDialog.Builder(context)
+							.setTitle("提示")
+							.setMessage("是否上传到云存储？")
+							.setPositiveButton(
+									"确定",
+									new android.content.DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO Auto-generated method stub
+										}
+									})
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											// TODO Auto-generated method stub
+											return;
+										}
+									}).create();
+					alertDialog.show();
+
+					return false;
+				}
+			});
 		} else
 			tv2.setText(values.get(position));
-
-		// convertView.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		// Intent intent = new Intent();
-		//
-		// // 颜色
-		// ll.setBackgroundResource(R.drawable.app_list_corner_shape);
-		//
-		// try {
-		// context.startActivity(intent);
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// }
-		// });
 
 		return convertView;
 	}

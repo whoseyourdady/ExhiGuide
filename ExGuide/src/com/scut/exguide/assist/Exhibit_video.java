@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 public class Exhibit_video extends BaseAdapter implements ListAdapter {
 
-
-
 	private Context context;
 	private LayoutInflater inflater;
 	private String[] names;
