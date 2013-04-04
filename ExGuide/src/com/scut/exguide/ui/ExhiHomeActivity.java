@@ -41,7 +41,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -162,9 +161,10 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 		initalLayout();
 		inialDialog(this).show();
-
+     
 	}
 
+	@SuppressWarnings("null")
 	protected Dialog inialDialog(final MyActivity Instance) {
 
 		list = api.getExhibitions();
@@ -178,23 +178,23 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int which) {
 				Toast.makeText(getApplicationContext(),
-						list.get(which).getName() + "", Toast.LENGTH_SHORT)
+						list.get(which).getName() + "", Toast.LENGTH_LONG)
 						.show();
 				Log.d("dd", list.get(which).getId() + "");
-				ReleaseMemory();
 				exhibition = api.getExhibitionInfo(list.get(which).getId());
 				initaiTitle(exhibition.getmName());
 				initalInfo();
 				initalItemHeader();
-				mPoserViewPager.setAdapter(null);
 				if (exhibition.getmPosterurl() != null)
 					new DownloadImage(Instance, 1).execute(exhibition
 							.getmPosterurl());
 			}
 		};
 
+	
+		
 		builder.setAdapter(adapter, listener);
-
+		
 		dialog = builder.create();
 
 		dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -202,30 +202,34 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			public boolean onKey(DialogInterface dialog, int keyCode,
 					KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK) {
-					Toast.makeText(getApplicationContext(), "请选择你现在所处的场景" + "",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),
+							"请选择你现在所处的场景"+ "", Toast.LENGTH_LONG)
+							.show();
 					return true;
 				} else {
 					return false; // 默认返回 false
 				}
 			}
 		});
-
+		
 		return dialog;
 	}
 
-	private void ReleaseMemory(){
-		if (bitmapsList != null) {
-			for (int i = 0; i < bitmapsList.size(); i++) {
-				if (!bitmapsList.get(i).isRecycled()) {
-					bitmapsList.get(i).recycle();
-				}
-			}
-			bitmapsList=null;
-			System.gc();
+	private OnClickListener onClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			scrollView.clickMenuBtn();
+			Log.d("aaa", MenuHorizontalScrollView.menuOut + "");
+			if (!MenuHorizontalScrollView.menuOut) {
+				main.setEnabled(false);
+			} else
+				main.setEnabled(true);
+
 		}
-	}
-	
+	};
+
 	public MenuHorizontalScrollView getScrollView() {
 		return scrollView;
 	}
@@ -267,7 +271,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			break;
 		case 4:
 			intent.setClass(this, ExGuideTutorialsActivity.class);
-			intent.putExtra("entrance", "home");
 			startActivity(intent);
 			break;
 		case 5:
@@ -436,41 +439,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			_imageView = (ImageView) temp.findViewById(R.id.show);
 			final Bitmap poster = bitmaps.get(i);
 			_imageView.setImageBitmap(poster);
-			_imageView.setOnLongClickListener(new OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(View v) {
-					// TODO Auto-generated method stub
-					AlertDialog alertDialog = new AlertDialog.Builder(
-							ExhiHomeActivity.this)
-							.setTitle("提示")
-							.setMessage("是否上传到云存储？")
-							.setPositiveButton(
-									"确定",
-									new android.content.DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// TODO Auto-generated method stub
-										}
-									})
-							.setNegativeButton("取消",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// TODO Auto-generated method stub
-											return;
-										}
-									}).create();
-					alertDialog.show();
-
-					return true;
-				}
-			});
-
 			_imageView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -580,7 +548,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			@Override
 			public void onCancel() {
 				Toast.makeText(getApplicationContext(), "用户取消百度PCS绑定",
-						Toast.LENGTH_SHORT).show();
+						Toast.LENGTH_LONG).show();
 			}
 
 			/*
@@ -623,7 +591,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	private void initImageView(Bitmap poster) {
 		ImageView image = (ImageView) popUpDialog.findViewById(R.id.image);
 		image.setImageBitmap(poster);
-
 		image.setOnClickListener(new ImageView.OnClickListener() {
 
 			@Override

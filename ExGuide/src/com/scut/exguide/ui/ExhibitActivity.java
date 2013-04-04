@@ -27,7 +27,6 @@ import android.os.StrictMode;
 
 import android.support.v4.view.ViewPager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +36,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup.LayoutParams;
 
 import android.widget.ImageView;
@@ -55,7 +53,6 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 	final static int FOUR = Menu.FIRST + 3;
 	final static int FIVE = Menu.FIRST + 4;
 
-	private ArrayList<Bitmap> bitmapsList;
 	public static ExGuideJSON api = new ExGuideJSON();
 
 	private final static String TAG = "ExhiHomeActivity";
@@ -120,8 +117,11 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 
 	// 创建Menu菜单
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, ONE, 0, "分享"); // 设置文字与图标
-		menu.add(0, TWO, 0, "帮助");
+		menu.add(0, ONE, 0, "绑定百度"); // 设置文字与图标
+		menu.add(0, TWO, 0, "分享");
+		menu.add(0, THREE, 0, "设置");
+		menu.add(0, FOUR, 0, "帮助");
+		menu.add(0, FIVE, 0, "退出");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -130,22 +130,46 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 		Intent intent = new Intent();
 		switch (item.getItemId()) {
 		case 1:
+			break;
+		/*----------------------------------------------------*/
+		case 2:
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
-			intent.putExtra(Intent.EXTRA_TEXT, "我正在"
-					+ ExhiHomeActivity.exhibition.getmName() + "\n我正在看"
-					+ exhibit.getName());
+			intent.putExtra(Intent.EXTRA_TEXT, "展会宝");
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(Intent.createChooser(intent, "分享"));
 			break;
 		/*----------------------------------------------------*/
-		case 2:
+		case 4:
 			intent.setClass(this, ExGuideTutorialsActivity.class);
-			intent.putExtra("entrance", "card");
 			startActivity(intent);
 			break;
-		/*----------------------------------------------------*/
+		case 5:
+			AlertDialog alertDialog = new AlertDialog.Builder(this)
+					.setTitle("提示")
+					.setMessage("是否退出本程序")
+					.setPositiveButton(
+							"确定",
+							new android.content.DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									finish();
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									return;
+								}
+							}).create();
+			alertDialog.show();
+			break;
 		default:
 
 		}
@@ -253,40 +277,6 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 			_imageView = (ImageView) temp.findViewById(R.id.show);
 			_imageView.setImageBitmap(bitmaps.get(i));
 			final Bitmap poster = bitmaps.get(i);
-			_imageView.setOnLongClickListener(new OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(View v) {
-					// TODO Auto-generated method stub
-					AlertDialog alertDialog = new AlertDialog.Builder(
-							ExhibitActivity.this)
-							.setTitle("提示")
-							.setMessage("是否上传到云存储？")
-							.setPositiveButton(
-									"确定",
-									new android.content.DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// TODO Auto-generated method stub
-										}
-									})
-							.setNegativeButton("取消",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// TODO Auto-generated method stub
-											return;
-										}
-									}).create();
-					alertDialog.show();
-
-					return true;
-				}
-			});
 			_imageView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -374,28 +364,12 @@ public class ExhibitActivity extends ActivityGroup implements MyActivity {
 
 		switch (((Integer) param[1])) {
 		case 1: {
-			bitmapsList = (ArrayList<Bitmap>) param[0];
+			ArrayList<Bitmap> bitmapsList = (ArrayList<Bitmap>) param[0];
 			UpdatePoster(CreatePosterView(bitmapsList));
 		}
 			break;
 		}
 
-	}
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		Log.i("FFFFFF", "aiaiaiaiadestroy");
-		if (bitmapsList != null) {
-			for (int i = 0; i < bitmapsList.size(); i++) {
-				if (!bitmapsList.get(i).isRecycled()) {
-					bitmapsList.get(i).recycle();
-				}
-			}
-			bitmapsList=null;
-			System.gc();
-		}
-		super.onDestroy();
 	}
 
 	/**

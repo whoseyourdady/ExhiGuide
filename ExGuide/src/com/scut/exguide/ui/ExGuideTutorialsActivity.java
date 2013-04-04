@@ -3,13 +3,11 @@ package com.scut.exguide.ui;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,7 +32,6 @@ public class ExGuideTutorialsActivity extends Activity {
 	private ViewGroup main; // 包裹滑动图片LinearLayout
 	private ViewGroup group; // 包裹小圆点的LinearLayout
 	private ImageButton iButton;
-	private String entrance;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +43,6 @@ public class ExGuideTutorialsActivity extends Activity {
 
 		LayoutInflater inflater = getLayoutInflater();
 
-		Intent intent = getIntent();
-		entrance = intent.getStringExtra("entrance");
 		pageViews = new ArrayList<View>(); // 生成链表
 		// 将要那个展示的页面加入链表中
 		pageViews.add(inflater.inflate(R.layout.guidefirst, null));
@@ -87,11 +82,9 @@ public class ExGuideTutorialsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (entrance == null) {
-					Intent intent = new Intent(ExGuideTutorialsActivity.this,
-							ExhiHomeActivity.class);
-					startActivity(intent);
-				}
+				// Intent intent = new Intent(ExGuideTutorialsActivity.this,
+				// ExhiHomeActivity.class);
+				// startActivity(intent);
 				finish();
 			}
 		});
@@ -101,14 +94,6 @@ public class ExGuideTutorialsActivity extends Activity {
 		viewPager.setAdapter(new GuidePageAdapter());
 		viewPager.setOnPageChangeListener(new GuidePageChangeListener());
 
-	}
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			return false;
-		}
-		return false;
 	}
 
 	// 指引页面数据适配器
