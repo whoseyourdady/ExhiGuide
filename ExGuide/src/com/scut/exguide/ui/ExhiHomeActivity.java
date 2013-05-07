@@ -43,6 +43,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -78,6 +79,7 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 
 	private ViewPager mPoserViewPager; // viewpager控件
 	private ArrayList<View> mPosterPages;// 用于翻页的view
+	private ArrayList<Bitmap> bitmapsList;
 
 	// 下部产品介绍中的view
 	private ViewPager mInfoViewPager;
@@ -114,6 +116,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	private ArrayList<Exhibition> list;
 	public static ExhibitionDetail exhibition;
 	public static Exhibit exhibit;
+
+	private Dialog popUpDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +202,6 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			public boolean onKey(DialogInterface dialog, int keyCode,
 					KeyEvent event) {
 				if (keyCode == KeyEvent.KEYCODE_BACK) {
-					KeyEvent.
 					Toast.makeText(getApplicationContext(),
 							"请选择你现在所处的场景"+ "", Toast.LENGTH_LONG)
 							.show();
@@ -257,7 +260,8 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
-			intent.putExtra(Intent.EXTRA_TEXT, "展会宝");
+			intent.putExtra(Intent.EXTRA_TEXT,
+					"~~~~~~~~~我在" + exhibition.getmName());
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(Intent.createChooser(intent, "分享"));
 			break;
@@ -433,7 +437,18 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		for (int i = 0; i < bitmaps.size(); i++) {
 			View temp = inflater.inflate(R.layout.poster, null);
 			_imageView = (ImageView) temp.findViewById(R.id.show);
-			_imageView.setImageBitmap(bitmaps.get(i));
+			final Bitmap poster = bitmaps.get(i);
+			_imageView.setImageBitmap(poster);
+			_imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					create(poster);
+					show();
+
+				}
+			});
 			viewList.add(temp);
 		}
 		return viewList;
@@ -506,13 +521,14 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 	/**
 	 * 1是更新海报
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void Update(Object... param) {
 		// TODO Auto-generated method stub
 
 		switch (((Integer) param[1])) {
 		case 1: {
-			ArrayList<Bitmap> bitmapsList = (ArrayList<Bitmap>) param[0];
+			bitmapsList = (ArrayList<Bitmap>) param[0];
 			UpdatePoster(CreatePosterView(bitmapsList));
 		}
 			break;
@@ -558,4 +574,31 @@ public class ExhiHomeActivity extends ActivityGroup implements MyActivity {
 		});
 	}
 
+	private void show() {
+		popUpDialog.show();
+	}
+
+	private void create(Bitmap poster) {
+		popUpDialog = new Dialog(this);
+		popUpDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		popUpDialog.getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		popUpDialog.setContentView(R.layout.image_dialog);
+		initImageView(poster);
+	}
+
+	private void initImageView(Bitmap poster) {
+		ImageView image = (ImageView) popUpDialog.findViewById(R.id.image);
+		image.setImageBitmap(poster);
+		image.setOnClickListener(new ImageView.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (popUpDialog != null) {
+					popUpDialog.dismiss();
+				}
+			}
+		});
+	}
 }

@@ -9,6 +9,7 @@ public class Exhibit {
 	private String[] vNames;
 	private String[] vUrls;
 	private String[] attachmenturls;
+	private String[] attachmentNames;
 
 	public Exhibit() {
 
@@ -68,6 +69,14 @@ public class Exhibit {
 
 	public void setAttachmenturls(String[] attachmenturls) {
 		this.attachmenturls = attachmenturls;
+	}
+
+	public String[] getAttachmentNames() {
+		return attachmentNames;
+	}
+
+	public void setAttachmentNames(String[] attachmentNames) {
+		this.attachmentNames = attachmentNames;
 	}
 
 }
